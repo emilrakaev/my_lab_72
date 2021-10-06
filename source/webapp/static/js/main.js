@@ -109,9 +109,9 @@ async function MainPage() {
             div.innerHTML = `<a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['id']}">К цитате <b><b/>>>></a>
             <b> № ${response[i]['id']}</b> <br><br>
             <b>Цитата</b>: <div class="box" style="background-color: cadetblue"><pre>${response[i]['text']}</pre></div><br>
-            Рейтинг: <b>${response[i]['']}? </b>  | 
-            <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['']}?">Up</a> | 
-            <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['']}?">Down</a><br><br>
+            Рейтинг: <b class="rating">${response[i]['rating']} </b>  | 
+            <a onclick='Up(event);' id="up" href="http://localhost:8000/api/quote/${response[i]['id']}/Up/">Up</a> | 
+            <a onclick='Down(event);' id="down" href="http://localhost:8000/api/quote/${response[i]['id']}/Down/">Down</a><br><br>
             <i> Добавленно: ${response[i]['created_at']}</i>`;
             div.classList.add('box');
             div.style.backgroundColor = 'white';
@@ -139,11 +139,32 @@ async function MainPage() {
         div.innerHTML = `<a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response['id']}">Цитата <b><b/>>>></a>
         <b> № ${response['id']}</b> <br><br>
         <b>Цитата</b>: <div class="box" style="background-color: cadetblue"><pre>${response['text']}</pre></div><br>
-        Рейтинг: <b>${response['']}? </b>  | 
-        <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response['']}?">Up</a> | 
-        <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response['']}?">Down</a><br><br>
+        Рейтинг: <b class="rating">${response['rating']} </b>  | 
+        <a onclick='Up(event);' id="up" href="http://localhost:8000/api/quote/${response['id']}/Up/">Up</a> | 
+        <a onclick='Down(event);' id="down" href="http://localhost:8000/api/quote/${response['id']}/Down/">Down</a><br><br>
         <i> Добавленно: ${response['created_at']}</i>`;
         div.classList.add('box');
         div.style.backgroundColor = 'white';
         Quote.appendChild(div);
     }
+async  function Up(event) {
+    event.preventDefault();
+    let a = event.target;
+    let url = a.href;
+    console.log(url);
+    let response = await makeRequest(url, 'POST');
+    const rating = a.parentElement.getElementsByClassName('rating')[0];
+    rating.innerText = `${response['rating']}`;
+
+}
+
+async  function Down(event) {
+    event.preventDefault();
+    let a = event.target;
+    let url = a.href;
+    console.log(url);
+    let response = await makeRequest(url, 'POST');
+    const rating = a.parentElement.getElementsByClassName('rating')[0];
+    rating.innerText = `${response['rating']}`;
+
+}

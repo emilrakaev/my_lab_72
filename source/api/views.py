@@ -48,9 +48,9 @@ class QuoteViewSet(ModelViewSet):
             vote = Vote.objects.create(rating=1, quote_id=quote.pk, session_key=session.session_key)
             quote.rating += 1
             quote.save()
-        return Response({'pk': pk})
+        return Response({'rating': quote.rating})
 
-    @action(methods=['delete'], detail=True)
+    @action(methods=['post'], detail=True)
     def Down(self, request, pk=None):
         if not self.request.session.session_key:
             self.request.session.save()
@@ -63,4 +63,4 @@ class QuoteViewSet(ModelViewSet):
             vote = Vote.objects.create(rating=-1, quote_id=quote.pk, session_key=session.session_key)
             quote.rating -= 1
             quote.save()
-        return Response({'pk': pk})
+        return Response({'rating': quote.rating})
