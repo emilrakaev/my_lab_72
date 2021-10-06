@@ -38,22 +38,26 @@
     </nav>
     <div class="container">
     <div class="box" id="get" style="display: none" >
-        <h1>Лучшие цитаты нашего двора!</h1>
+
     </div>
     <div class="box" id="post" style="display: none" >
         <form action="">
-        {% csrf_token %}
             <div class="box">
-                <label class="input" for="quote">Цитата:</label><br>
-                <textarea class="input" name="quote" id="quote" cols="40" rows="3"></textarea><br>
+                <label class="input" for="text">Цитата:</label><br>
+                <textarea class="input"  id="text" cols="40" rows="3"></textarea><br>
+
                 <label class="input" for="author">Автор:</label><br>
-                <input class="input" type="text" id="author" name="author"><br>
+                <input class="input" type="text" id="author" value="author"><br>
+
                 <label class="input" for="email">Email:</label><br>
-                <input class="input" type="email" id="email" name="email"><br>
-                <input class="input" type="submit">
+                <input class="input" type="email" id="email" value="email@email.com"><br>
+
+                <input class="input" id="submit" type="submit">
             </div>
         </form>
     </div>
+
+    <div id="message" class="box" style="display: none"> </div>
 
         {% block content %}{% endblock %}
     </div>

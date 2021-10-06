@@ -8,5 +8,6 @@ router.register('quote', QuoteViewSet, basename='quote')
 app_name = 'api'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('get-token/', get_token_view, name='get_token'),
 ]

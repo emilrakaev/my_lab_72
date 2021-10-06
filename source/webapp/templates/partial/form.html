@@ -2,7 +2,6 @@
     <form action="{{ action_url }}" method="{{ form_method }}" enctype="{{ enctype }}" id="{{ form_id }}">
         {% csrf_token %}
 {% endif %}
-
         {% for error in form.non_field_errors %}
             <p class="error">{{ error }}</p>
         {% endfor %}

@@ -39,21 +39,49 @@ async function makeRequest(url, method='GET', data=undefined) {
 }
 
 window.addEventListener('load', function() {
-    const mianPage = document.getElementById('main');
+    const mainPage = document.getElementById('main');
     const addQuote = document.getElementById('addQuote');
-    // const divide = document.getElementById('divide');
-    // const multiply = document.getElementById('multiply');
-    //
-    mianPage.onclick = MainPage;
-    addQuote.onclick = ViewForm;
-    // divide.onclick = onLike;
-    // multiply.onclick = onLike;
+    const submit = document.getElementById('submit');
 
+    mainPage.onclick = MainPage;
+    addQuote.onclick = ViewForm;
+    submit.onclick = AddQuote;
 });
+
+async function AddQuote() {
+    const allQuotes = document.getElementById('get');
+    const form = document.getElementById('post');
+    const message = document.getElementById('message');
+    message.style.display = '';
+    form.style.display = 'none';
+    allQuotes.style.display = 'none';
+    const text = document.getElementById('text').value;
+    const author = document.getElementById('author').value;
+    const email = document.getElementById('email').value;
+
+    try {
+        let response = await makeRequest('http://localhost:8000/api/quote/', 'POST',
+            {"text": text, "author": author, "email": email} );
+        console.log(response);
+        message.innerText = 'Цитата созданна успешно!';
+        message.style.background = '';
+    }
+    catch (error) {
+        error = await error.response;
+        console.log(error)
+        console.log(error.status)
+        console.log(error.statusText)
+        message.innerHTML =  `<h4 style="font-size:50px;"> ${error.status}<b> ${error.statusText}</b> </h4> `;
+        message.style.background = 'grey';
+        }
+    }
+
 
 async function ViewForm() {
     const allQuotes = document.getElementById('get');
     const form = document.getElementById('post');
+    const message = document.getElementById('message');
+    message.style.display = 'none';
     form.style.display = '';
     allQuotes.style.display = 'none'
         let response = await makeRequest('http://localhost:8000/api/quote/', 'GET');
@@ -63,16 +91,17 @@ async function ViewForm() {
 async function MainPage() {
     const allQuotes = document.getElementById('get');
     const form = document.getElementById('post');
+    const message = document.getElementById('message');
+    message.style.display = 'none';
     form.style.display = 'none';
     allQuotes.innerHTML = '';
+    allQuotes.innerHTML =  `<h1>Лучшие цитаты нашего двора!</h1>`
         let response = await makeRequest('http://localhost:8000/api/quote/', 'GET');
-        console.log(response)
         for (let i = 0; i < response.length; i++){
             let p = document.createElement('p');
             p.innerHTML = `<b>№ ${i+1}</b> :  ${response[i]['text']}<br/>`;
             allQuotes.appendChild(p)
         console.log(response[i]['text']);
-
         }
         allQuotes.style.display = '';
     }
