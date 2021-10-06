@@ -52,6 +52,8 @@ async function AddQuote() {
     const allQuotes = document.getElementById('get');
     const form = document.getElementById('post');
     const message = document.getElementById('message');
+    const Quote = document.getElementById('Quote');
+    Quote.style.display = 'none';
     message.style.display = '';
     form.style.display = 'none';
     allQuotes.style.display = 'none';
@@ -63,7 +65,7 @@ async function AddQuote() {
         let response = await makeRequest('http://localhost:8000/api/quote/', 'POST',
             {"text": text, "author": author, "email": email} );
         console.log(response);
-        message.innerText = 'Цитата созданна успешно!';
+        message.innerHTML = '<h5 style="font-size:40px;">Цитата созданна успешно!</h5>';
         message.style.background = '';
     }
     catch (error) {
@@ -81,6 +83,8 @@ async function ViewForm() {
     const allQuotes = document.getElementById('get');
     const form = document.getElementById('post');
     const message = document.getElementById('message');
+    const Quote = document.getElementById('Quote');
+    Quote.style.display = 'none';
     message.style.display = 'none';
     form.style.display = '';
     allQuotes.style.display = 'none'
@@ -92,44 +96,41 @@ async function MainPage() {
     const allQuotes = document.getElementById('get');
     const form = document.getElementById('post');
     const message = document.getElementById('message');
+    const Quote = document.getElementById('Quote');
+    Quote.style.display = 'none';
     message.style.display = 'none';
     form.style.display = 'none';
     allQuotes.innerHTML = '';
+    allQuotes.style.display = '';
     allQuotes.innerHTML =  `<h1>Лучшие цитаты нашего двора!</h1>`
         let response = await makeRequest('http://localhost:8000/api/quote/', 'GET');
         for (let i = 0; i < response.length; i++){
             let p = document.createElement('p');
-            p.innerHTML = `<b>№ ${i+1}</b> :  ${response[i]['text']}<br/>`;
+            p.innerHTML = `<a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['id']}">
+<b>№ ${response[i]['id']}</b> :  ${response[i]['text'].slice(0,30)} | Статус: ${response[i]['status_display']}<br/></a>`;
             allQuotes.appendChild(p)
-        console.log(response[i]['text']);
         }
-        allQuotes.style.display = '';
     }
 
-async function Click(url) {
-    const A = document.getElementById('a').value;
-    const B = document.getElementById('b').value;
-    const text = document.getElementById('output');
-    try {
-        let response = await makeRequest(url, 'POST', {"A": A, "B": B});
-        text.innerText =  response['answer'];
-        text.style.background = 'green';
-    }
-    catch (error) {
-        error = await error.response;
-        error= error.json();
-        error = await error;
-        text.innerText =  error['error'];
-        text.style.background = 'red';
-    }
-}
-
- function onClick(event) {
+ async function onClick(event) {
     event.preventDefault();
-    let aId = event.target.dataset['a'];
-    let a = document.getElementById(aId);
+    let a = event.target;
     let url = a.href;
     console.log(url);
-    Click(url);
-
-}
+    const allQuotes = document.getElementById('get');
+    const form = document.getElementById('post');
+    const message = document.getElementById('message');
+    const Quote = document.getElementById('Quote');
+    Quote.style.display = '';
+    Quote.innerHTML = '';
+    message.style.display = 'none';
+    form.style.display = 'none';
+    allQuotes.style.display = 'none';
+        let response = await makeRequest(url, 'GET');
+               console.log(response);
+        let p = document.createElement('p');
+        p.innerHTML = `Цитата:<br/><div class="box">${response['text']}<b></div>
+<br/><i>Добавленно: ${response['created_at']}</i><p>Автор -<b> ${response['author']}<b></p>
+ Статус: ${response['status_display']}.`;
+        Quote.appendChild(p);
+    }

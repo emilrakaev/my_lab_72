@@ -55,9 +55,11 @@ body {
 }
 
 .box {
-    box-sizing: border-box;
+    box-sizing:  border-box;
     margin: 10px;
     padding: 10px;
+    border: solid 1px;
+    border-radius: 10px;
 }
 
 input[type='submit']:hover {

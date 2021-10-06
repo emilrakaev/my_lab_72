@@ -17,9 +17,8 @@
         <div class="container">
             <ul class="menu">
                 <li><a href="#" id="main">Главная</a></li>
-                {% if request.user.is_authenticated %}
                     <li><a href="#" id="addQuote">Добавить Цитату</a></li>
-                    {% block menu %}{% endblock %}
+                {% if request.user.is_authenticated %}
                     <li><a href="{% url 'accounts:detail' request.user.pk %}">
                         Привет, {{ request.user.get_full_name|default:request.user.username }}
                     </a></li>
@@ -40,9 +39,9 @@
     <div class="box" id="get" style="display: none" >
 
     </div>
-    <div class="box" id="post" style="display: none" >
+    <div class="box" id="post" style="display: none; background-color: #444444" >
         <form action="">
-            <div class="box">
+            <div class="box" style=" background-color: white;">
                 <label class="input" for="text">Цитата:</label><br>
                 <textarea class="input"  id="text" cols="40" rows="3"></textarea><br>
 
@@ -58,6 +57,7 @@
     </div>
 
     <div id="message" class="box" style="display: none"> </div>
+    <div id="Quote" class="box" style="display: none"> </div>
 
         {% block content %}{% endblock %}
     </div>
