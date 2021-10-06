@@ -1,13 +1,14 @@
-from django.http import HttpResponseNotAllowed, HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-
-from api.permissions import QuotePermissions
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from api.serializers import QuoteCreateSerializer, QuoteUpdateSerializer, QuoteSerializer
 from webapp.models import Quote, Vote
+from .permissions import QuotePermissions
+from django.contrib.sessions.models import Session
 
 
 @ensure_csrf_cookie
@@ -21,7 +22,8 @@ class QuoteViewSet(ModelViewSet):
     permission_classes = [QuotePermissions]
 
     def get_queryset(self):
-        if self.request.method == 'GET' and not self.request.user.has_perm('webapp.quote_view'):
+        if self.request.method == 'GET' and \
+                not self.request.user.has_perm('webapp.quote_view'):
             return Quote.get_moderated()
         return Quote.objects.all()
 
@@ -32,24 +34,33 @@ class QuoteViewSet(ModelViewSet):
             return QuoteUpdateSerializer
         return QuoteSerializer
 
+    @action(methods=['post'], detail=True)
+    def Up(self, request, pk=None):
+        if not self.request.session.session_key:
+            self.request.session.save()
+        session = Session.objects.get(session_key=self.request.session.session_key)
+        quote = get_object_or_404(Quote, pk=pk)
+        try:
+            print(session.session_key)
+            vote = Vote.objects.get(quote_id=quote.pk, session_key=session.session_key)
+        except ObjectDoesNotExist:
+            print(quote.status)
+            vote = Vote.objects.create(rating=1, quote_id=quote.pk, session_key=session.session_key)
+            quote.rating += 1
+            quote.save()
+        return Response({'pk': pk})
 
-@action(methods=['post'], detail=True)
-def VoteUp(self, request, pk=None):
-    quote = get_object_or_404(Quote, pk=pk)
-    like, created = Vote.objects.get_or_create(quote=quote, user=request.sesion.key)
-    if created:
-        quote.rating += 1
-        quote.save()
-        return Response({'pk': pk, 'rating': quote.rating})
-    else:
-        return Response(status=403)
-
-
-@action(methods=['delete'], detail=True)
-def VoteDown(self, request, pk=None):
-    article = get_object_or_404(Article, pk=pk)
-    like = get_object_or_404(article.likes, user=request.user)
-    like.delete()
-    article.like_count -= 1
-    article.save()
-    return Response({'pk': pk, 'likes': article.like_count})
+    @action(methods=['delete'], detail=True)
+    def Down(self, request, pk=None):
+        if not self.request.session.session_key:
+            self.request.session.save()
+        session = Session.objects.get(session_key=self.request.session.session_key)
+        quote = get_object_or_404(Quote, pk=pk)
+        try:
+            vote = Vote.objects.get(quote_id=quote.pk,  session_key=session.session_key)
+        except ObjectDoesNotExist:
+            print(quote.status)
+            vote = Vote.objects.create(rating=-1, quote_id=quote.pk, session_key=session.session_key)
+            quote.rating -= 1
+            quote.save()
+        return Response({'pk': pk})

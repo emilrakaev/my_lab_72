@@ -32,32 +32,28 @@
                     {% endif %}
                 {% endblock %}
             </ul>
-
         </div>
     </nav>
     <div class="container">
-    <div class="box" id="get" style="display: none" >
+    <div class="box" id="get" style="display: none; background-color: gray" >
 
     </div>
     <div class="box" id="post" style="display: none; background-color: #444444" >
         <form action="">
-            <div class="box" style=" background-color: white;">
+            <div class="box" style=" background-color: #ffffff;">
                 <label class="input" for="text">Цитата:</label><br>
                 <textarea class="input"  id="text" cols="40" rows="3"></textarea><br>
-
                 <label class="input" for="author">Автор:</label><br>
                 <input class="input" type="text" id="author" value="author"><br>
-
                 <label class="input" for="email">Email:</label><br>
                 <input class="input" type="email" id="email" value="email@email.com"><br>
-
                 <input class="input" id="submit" type="submit">
             </div>
         </form>
     </div>
 
-    <div id="message" class="box" style="display: none"> </div>
-    <div id="Quote" class="box" style="display: none"> </div>
+    <div id="message" class="box" style="display: none; background-color: gray"> </div>
+    <div id="Quote" class="box" style="display: none; background-color: gray"> </div>
 
         {% block content %}{% endblock %}
     </div>

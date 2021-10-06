@@ -105,10 +105,17 @@ async function MainPage() {
     allQuotes.innerHTML =  `<h1>Лучшие цитаты нашего двора!</h1>`
         let response = await makeRequest('http://localhost:8000/api/quote/', 'GET');
         for (let i = 0; i < response.length; i++){
-            let p = document.createElement('p');
-            p.innerHTML = `<a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['id']}">
-<b>№ ${response[i]['id']}</b> :  ${response[i]['text'].slice(0,30)} | Статус: ${response[i]['status_display']}<br/></a>`;
-            allQuotes.appendChild(p)
+            let div = document.createElement('div');
+            div.innerHTML = `<a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['id']}">К цитате <b><b/>>>></a>
+            <b> № ${response[i]['id']}</b> <br><br>
+            <b>Цитата</b>: <div class="box" style="background-color: cadetblue"><pre>${response[i]['text']}</pre></div><br>
+            Рейтинг: <b>${response[i]['']}? </b>  | 
+            <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['']}?">Up</a> | 
+            <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response[i]['']}?">Down</a><br><br>
+            <i> Добавленно: ${response[i]['created_at']}</i>`;
+            div.classList.add('box');
+            div.style.backgroundColor = 'white';
+            allQuotes.appendChild(div);
         }
     }
 
@@ -128,9 +135,15 @@ async function MainPage() {
     allQuotes.style.display = 'none';
         let response = await makeRequest(url, 'GET');
                console.log(response);
-        let p = document.createElement('p');
-        p.innerHTML = `Цитата:<br/><div class="box">${response['text']}<b></div>
-<br/><i>Добавленно: ${response['created_at']}</i><p>Автор -<b> ${response['author']}<b></p>
- Статус: ${response['status_display']}.`;
-        Quote.appendChild(p);
+        let div = document.createElement('div');
+        div.innerHTML = `<a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response['id']}">Цитата <b><b/>>>></a>
+        <b> № ${response['id']}</b> <br><br>
+        <b>Цитата</b>: <div class="box" style="background-color: cadetblue"><pre>${response['text']}</pre></div><br>
+        Рейтинг: <b>${response['']}? </b>  | 
+        <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response['']}?">Up</a> | 
+        <a onclick='onClick(event);' href="http://localhost:8000/api/quote/${response['']}?">Down</a><br><br>
+        <i> Добавленно: ${response['created_at']}</i>`;
+        div.classList.add('box');
+        div.style.backgroundColor = 'white';
+        Quote.appendChild(div);
     }
